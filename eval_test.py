@@ -27,6 +27,7 @@ from PIL import Image
 
 import matplotlib.pyplot as plt
 import cv2
+import logging
 #
 # output_dict = {
 # 'index'
@@ -1118,6 +1119,23 @@ def to_json(num_frames, classes_list, boxes_list, scores_list) :
 
 def to_log(num_frames, classes_list, boxes_list, scores_list) :
 
+    logger = logging.getLogger()
+    #로그 생성
+    logger.setLevel(logging.INFO)
+    #로그 출력 기준
+    formatter = logging.Formatter('%(asctime)s - %(name)s -  %(message)s')
+    #로그  출력 형식
+
+    #log 출력
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    file_handler = logging.FileHandler('video.log')
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+
     file_data = list()
 
     for i in range(num_frames) :
@@ -1127,6 +1145,12 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
         each_data['scores'] = scores_list[i].tolist()
         each_data['box_coordinates'] = boxes_list[i].tolist()
         file_data.append(each_data)
+        logger.info('frame_index : %each_data['frame_index'], each_data['class_id'],  each_data['scores'], each_data['box_coordinates'] )
+
+    #for i in range(len(file_data)) :
+    #    logger.info(file_data[i])
+
+
 
     with open('recognized_result.json', 'w', encoding='utf-8') as make_file:
         json.dump(file_data, make_file, ensure_ascii = False, indent='\t')
@@ -1194,6 +1218,7 @@ if __name__ == '__main__':
             net = net.cuda()
 
         evaluate(net, dataset)
-        to_json(num_frames, classes_list, boxes_list, scores_list)  ## num_frame = 총 frame 개수
+        #to_json(num_frames, classes_list, boxes_list, scores_list)  ## num_frame = 총 frame 개수
+        to_log(num_frames, classes_list, boxes_list, scores_list)
 
 
