@@ -29,18 +29,13 @@ from PIL import Image
 
 import matplotlib.pyplot as plt
 import cv2
-#
-# output_dict = {
-# 'index'
-# 'classes' : [],
-# 'scores' : [],
-# 'boxes' : []
-# }
 
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 classes_list =[]
 scores_list =[]
 boxes_list =[]
-
+os.environ["CUDA_VISIBLE_DEVICES"]=""
 
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
@@ -145,15 +140,15 @@ coco_cats = {} # Call prep_coco_cats to fill this
 coco_cats_inv = {}
 color_cache = defaultdict(lambda: {})
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+#.cuda() -> .to(device) 156, #714, #715, #747, #454, #455 #641
 def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, mask_alpha=0.45, fps_str=''):
     """
     Note: If undo_transform=False then im_h and im_w are allowed to be None.
     """
     if undo_transform:
         img_numpy = undo_image_transformation(img, w, h)
-        img_gpu = torch.Tensor(img_numpy).cuda()
+        img_gpu = torch.Tensor(img_numpy).to(device) #img_gpu = torch.Tensor(img_numpy).cuda()
     else:
         img_gpu = img / 255.0
         h, w, _ = img.shape
@@ -451,8 +446,8 @@ def prep_metrics(ap_data, dets, img, gt, gt_masks, h, w, num_crowd, image_id, de
             scores = list(scores.cpu().numpy().astype(float))
             box_scores = scores
             mask_scores = scores
-        masks = masks.view(-1, h*w).cuda()
-        boxes = boxes.cuda()
+        masks = masks.view(-1, h*w).to(device) #masks = masks.view(-1, h*w).cuda()
+        boxes = boxes.to(device) #boxes = boxes.cuda()
 
 
     if args.output_coco_json:
@@ -638,7 +633,7 @@ def badhash(x):
 def evalimage(net:Yolact, path:str, save_path:str=None):
     frame = torch.from_numpy(cv2.imread(path))
     if torch.cuda.is_available():
-        frame = frame.cuda()
+        frame = frame.to(device) #frame = frame.cuda()
     frame = frame.float()
 
     batch = FastBaseTransform()(frame.unsqueeze(0))
@@ -711,8 +706,8 @@ def evalvideo(net:Yolact, path:str, out_path:str=None):
     else:
         num_frames = round(vid.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    net = CustomDataParallel(net).cuda()
-    transform = torch.nn.DataParallel(FastBaseTransform()).cuda()
+    net = CustomDataParallel(net).to(device) #net = CustomDataParallel(net).cuda()
+    transform = torch.nn.DataParallel(FastBaseTransform()).to(device)
     frame_times = MovingAverage(100)
     fps = 0
     frame_time_target = 1 / target_fps
@@ -744,7 +739,7 @@ def evalvideo(net:Yolact, path:str, out_path:str=None):
 
     def transform_frame(frames):
         with torch.no_grad():
-            frames = [torch.from_numpy(frame).cuda().float() for frame in frames]
+            frames = [torch.from_numpy(frame).to(device).float() for frame in frames] #frames = [torch.from_numpy(frame).cuda().float() for frame in frames]
             return frames, transform(torch.stack(frames, 0))
 
     def eval_network(inp):
@@ -1190,7 +1185,8 @@ if __name__ == '__main__':
         print(' Done.')
 
         if args.cuda:
-            net = net.cuda()
+            net = net.to(device)
+            #net = net.cuda()
 
         evaluate(net, dataset)
         to_json(num_frames, classes_list, boxes_list, scores_list)  ## num_frame = 총 frame 개수

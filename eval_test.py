@@ -771,14 +771,14 @@ def evalvideo(net:Yolact, path:str, out_path:str=None):
                     if last_time is not None:
                         video_frame_times.add(next_time - last_time)
                         video_fps = 1 / video_frame_times.get_avg()
-                    if out_path is None:
-                        cv2.imshow(path, frame_buffer.get())
+                    #if out_path is None: 해당부분 주석처리
+                    #    cv2.imshow(path, frame_buffer.get())
                     else:
                         out.write(frame_buffer.get())
                     frames_displayed += 1
                     last_time = next_time
 
-                    if out_path is not None: ##아웃풋패스 지정되어 있을때만 실행
+                    if out_path is None: ##아웃풋패스 지정되어 있을때만 프로그래스바  ## not none 에서 none으로 변경
                         if video_frame_times.get_avg() == 0:
                             fps = 0
                         else:
@@ -937,6 +937,7 @@ def evaluate(net:Yolact, dataset, train_mode=False): ##측정하는 함수
     # print(scores_list)
     # print(boxes_list)
     # exit()
+    print('detection and recognition done.')
     return
 '''-------------------------------------
     print('dataset은 무엇일까요 : ', dataset)
@@ -1150,12 +1151,7 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
     #for i in range(len(file_data)) :
     #    logger.info(file_data[i])
 
-
-
-    with open('recognized_result.json', 'w', encoding='utf-8') as make_file:
-        json.dump(file_data, make_file, ensure_ascii = False, indent='\t')
-
-    print('\n...dumped results in json form')
+    print('\n...dumped results in log form')
 
 
 if __name__ == '__main__':
@@ -1219,6 +1215,8 @@ if __name__ == '__main__':
 
         evaluate(net, dataset)
         #to_json(num_frames, classes_list, boxes_list, scores_list)  ## num_frame = 총 frame 개수
+        print('dumping out in log')
         to_log(num_frames, classes_list, boxes_list, scores_list)
+
 
 

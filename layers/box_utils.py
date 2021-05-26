@@ -3,6 +3,8 @@ import torch
 from utils import timer
 from data import cfg
 
+#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 @torch.jit.script
 def point_form(boxes):
     """ Convert prior_boxes to (xmin, ymin, xmax, ymax)

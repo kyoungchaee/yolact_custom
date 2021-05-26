@@ -21,10 +21,12 @@ from utils.functions import MovingAverage, make_net
 # This is required for Pytorch 1.0.1 on Windows to initialize Cuda on some driver versions.
 # See the bug report here: https://github.com/pytorch/pytorch/issues/17108
 #os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-#os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]=""
 
-if torch.cuda.is_available():
-    torch.cuda.current_device()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+#if torch.cuda.is_available():
+ #   torch.cuda.current_device()
 
 # As of March 10, 2019, Pytorch DataParallel still doesn't support JIT Script Modules
 use_jit = not torch.cuda.is_available() or torch.cuda.device_count() <= 1
@@ -218,6 +220,7 @@ class PredictionModule(nn.Module):
 
     def make_priors(self, conv_h, conv_w, device):
         """ Note that priors are [x,y,width,height] where (x,y) is the center of the box. """
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         global prior_cache
         size = (conv_h, conv_w)
 

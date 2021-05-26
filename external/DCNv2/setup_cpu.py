@@ -31,6 +31,7 @@ def get_extensions():
     if torch.cuda.is_available() == False and CUDA_HOME is None:
         extension = CUDAExtension
         sources += source_cuda
+        torch.cuda.device('cpu')
         define_macros += [("WITH_CUDA", None)]
         extra_compile_args["nvcc"] = [
             "-DCUDA_HAS_FP16=1",
