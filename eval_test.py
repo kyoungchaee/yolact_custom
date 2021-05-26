@@ -1146,7 +1146,7 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
         each_data['scores'] = scores_list[i].tolist()
         each_data['box_coordinates'] = boxes_list[i].tolist()
         file_data.append(each_data)
-        logger.info('frame_index : %each_data['frame_index'], each_data['class_id'],  each_data['scores'], each_data['box_coordinates'] )
+        logger.info('frame_index : ', each_data['frame_index'], each_data['class_id'],  each_data['scores'], each_data['box_coordinates'])
 
     #for i in range(len(file_data)) :
     #    logger.info(file_data[i])
