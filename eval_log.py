@@ -771,14 +771,14 @@ def evalvideo(net:Yolact, path:str, out_path:str=None):
                     if last_time is not None:
                         video_frame_times.add(next_time - last_time)
                         video_fps = 1 / video_frame_times.get_avg()
-                    #if out_path is None: 해당부분 주석처리
-                    #    cv2.imshow(path, frame_buffer.get())
+                    if out_path is None:
+                        cv2.imshow(path, frame_buffer.get())
                     else:
                         out.write(frame_buffer.get())
                     frames_displayed += 1
                     last_time = next_time
 
-                    if out_path is None: ##아웃풋패스 지정되어 있을때만 프로그래스바  ## not none 에서 none으로 변경
+                    if out_path is not None: ##아웃풋패스 지정되어 있을때만 프로그래스바  ## not none 에서 none으로 변경
                         if video_frame_times.get_avg() == 0:
                             fps = 0
                         else:
@@ -1146,7 +1146,8 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
         each_data['scores'] = scores_list[i].tolist()
         each_data['box_coordinates'] = boxes_list[i].tolist()
         file_data.append(each_data)
-        logger.info('frame_index : ', each_data['frame_index'], each_data['class_id'],  each_data['scores'], each_data['box_coordinates'])
+        logger.info(each_data)
+        #logger.info(each_data['frame_index'], each_data['class_id'], each_data['scores'], each_data['box_coordinates'])
 
     #for i in range(len(file_data)) :
     #    logger.info(file_data[i])
