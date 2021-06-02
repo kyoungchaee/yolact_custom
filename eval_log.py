@@ -1120,6 +1120,7 @@ def to_json(num_frames, classes_list, boxes_list, scores_list) :
 
 def to_log(num_frames, classes_list, boxes_list, scores_list) :
 
+    ##logging.basicConfig(filename='./log/video.log')
     logger = logging.getLogger()
     #로그 생성
     logger.setLevel(logging.INFO)
@@ -1132,7 +1133,7 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 
-    file_handler = logging.FileHandler('video.log')
+    file_handler = logging.FileHandler('./log/video.log')
     file_handler.setFormatter(formatter)
 
     logger.addHandler(file_handler)
