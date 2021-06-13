@@ -1125,7 +1125,7 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
     #로그 생성
     logger.setLevel(logging.INFO)
     #로그 출력 기준
-    formatter = logging.Formatter('%(asctime)s - %(name)s -  %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(message)s')
     #로그  출력 형식
 
     #log 출력
@@ -1146,12 +1146,9 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
         each_data['class_id'] = classes_list[i].tolist()
         each_data['scores'] = scores_list[i].tolist()
         each_data['box_coordinates'] = boxes_list[i].tolist()
-        file_data.append(each_data)
-        logger.info(each_data)
-        #logger.info(each_data['frame_index'], each_data['class_id'], each_data['scores'], each_data['box_coordinates'])
 
-    #for i in range(len(file_data)) :
-    #    logger.info(file_data[i])
+        log_str = str(each_data['frame_index']) + ' ' + str(each_data['class_id'][0]) + ' ' + str(round(each_data['scores'][0],4)) + ' ' + str(each_data['box_coordinates'][0])
+        logger.info(log_str)
 
     print('\n...dumped results in log form')
 
@@ -1219,6 +1216,3 @@ if __name__ == '__main__':
         #to_json(num_frames, classes_list, boxes_list, scores_list)  ## num_frame = 총 frame 개수
         print('dumping out in log')
         to_log(num_frames, classes_list, boxes_list, scores_list)
-
-
-
