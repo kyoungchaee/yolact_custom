@@ -1140,14 +1140,46 @@ def to_log(num_frames, classes_list, boxes_list, scores_list) :
 
     file_data = list()
 
+    empty_list = []
+
+    detect_null_id = lambda a: temp_class_id.append('-991') if a == []else a
+    detect_null_scores = lambda a: temp_scores.append('-991') if a == [] else a
+    detect_null_coordi = lambda a: temp_coordi.append('-991') if a == [] else a
+
+    def coordi_check(list_check):
+        if not list_check:
+            temp_coordi.append(['-991', '-991', '-991', '-991'])
+            return temp_coordi
+        else:
+            return list_check
+
+    def id_check(list_check):
+        if not list_check:
+            temp_class_id.append('-991')
+            return temp_class_id
+        else:
+            return list_check
+
+    def scores_check(list_check):
+        if not list_check:
+            temp_scores.append('-991')
+            return temp_scores
+        else:
+            return list_check
+
     for i in range(num_frames) :
+        temp_class_id = []
+        temp_scores = []
+        temp_coordi = []
+
         each_data = OrderedDict()
         each_data['frame_index'] = i
-        each_data['class_id'] = classes_list[i].tolist()
-        each_data['scores'] = scores_list[i].tolist()
-        each_data['box_coordinates'] = boxes_list[i].tolist()
 
-        log_str = str(each_data['frame_index']) + ' ' + str(each_data['class_id'][0]) + ' ' + str(round(each_data['scores'][0],4)) + ' ' + str(each_data['box_coordinates'][0])
+        each_data['class_id'] =  id_check(classes_list[i].tolist())
+        each_data['scores'] =  scores_check(scores_list[i].tolist())
+        each_data['box_coordinates'] =  coordi_check(boxes_list[i].tolist())
+
+        log_str = str(each_data['frame_index']) + ' ' + str(each_data['class_id'][0]) + ' ' + str(each_data['scores'][0]) + ' ' + str(each_data['box_coordinates'][0])
         logger.info(log_str)
 
     print('\n...dumped results in log form')
